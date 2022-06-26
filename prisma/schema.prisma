@@ -1,0 +1,42 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+  binaryTargets = ["native"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id       Int    @id @default(autoincrement())
+  email    String @unique
+  password String
+}
+
+// 1 - n ImageValue
+model Image {
+  id          Int          @id @default(autoincrement())
+  name        String
+  stack       Stack        @relation(fields: [stackId], references: [id])
+  stackId     Int
+  imageValues ImageValue[]
+}
+
+model ImageValue {
+  id          Int     @id @default(autoincrement())
+  image       Image   @relation(fields: [imageId], references: [id])
+  imageId     Int
+  field_name  String
+  is_optional Boolean @default(true)
+}
+
+// 1 - n Image
+model Stack {
+  id     Int     @id @default(autoincrement())
+  name   String
+  images Image[]
+}
